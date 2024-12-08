@@ -42,7 +42,6 @@ module.exports = {
 
         let profileEmbed = new EmbedBuilder()
             .setColor(member.displayHexColor)
-            .setAuthor({ name: `${member.user.tag}'s Profile`, iconURL: member.displayAvatarURL({ dynamic: true }) })
             .setThumbnail(member.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
             .setDescription(`${member}`)
@@ -51,21 +50,40 @@ module.exports = {
                 { name: 'Known As:', value: `${await getTitle(member)}`, inline: true },
                 { name: 'Account Created:', value: `<t:${Math.floor(member.user.createdAt.getTime() / 1000)}:R>`, inline: true },
                 { name: 'Joined Server:', value: `<t:${Math.floor(member.joinedTimestamp / 1000)}:R>`, inline: true },
-                { name: 'Roles:', value: await getRoles(member) },
-
+                { name: 'Roles:', value: await getRoles(member) }
             ]);
+
+        switch (member.presence.status) {
+            case 'online':
+                profileEmbed.setDescription(`${member} 🟢`);
+                break;
+            case 'idle':
+                profileEmbed.setDescription(`${member} 🟡`);
+                break;
+            case 'dnd':
+                profileEmbed.setDescription(`${member} 🔴`);
+                break;
+            case 'offline':
+                profileEmbed.setDescription(`${member} ⚫`);
+                break;
+        }
 
         if (member.id === interaction.member.id) {
             profileEmbed.addFields([
+                { name: 'Among Us Friend Code:', value: memberData.friendcode || 'Not Set', inline: true },
                 { name: 'Admire Opt-In:', value: memberData.admireOptIn ? 'Yes' : 'No', inline: true },
             ]);
 
+            // const friendcodeButton = new ButtonBuilder()
+            //     .setLabel('Set Among Us Friend Code')
+            //     .setStyle(ButtonStyle.Primary)
+            //     .setCustomId('set_friendcode');
             const admireButton = new ButtonBuilder()
                 .setLabel('Toggle Admire Opt-In')
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('toggle_admire_opt_in');
 
-            const row = new ActionRowBuilder().addComponents(admireButton);
+            const row = new ActionRowBuilder().addComponents(friendcodeButton, admireButton);
             return interaction.reply({ embeds: [profileEmbed], components: [row], ephemeral: true }).then(async (r) => {
                 const collectorFilter = i => member.id === interaction.member.id;
                 try {
