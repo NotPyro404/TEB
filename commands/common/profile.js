@@ -29,7 +29,6 @@ module.exports = {
 
     async execute(interaction) {
         const member = await interaction.options.getMember('user') || await interaction.member;
-        console.log(member.presence.clientStatus);
         let memberData = await getUserByID(member.id);
 
         if (memberData.error) {
@@ -57,8 +56,7 @@ module.exports = {
         const clients = member.presence.clientStatus;
         let status = `${member} `;
         if (!clients) status += ' ⚫';
-        
-        for (const [key, value] of Object.entries(clients || {})) {
+        else for (const [key, value] of Object.entries(clients || {})) {
             // Check each platform and add the corresponding emoji to the status string
             if (key === 'desktop') {
                 if (value === 'online') status += ' <:d_online:1315460103151030342>';
