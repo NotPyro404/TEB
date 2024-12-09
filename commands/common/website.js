@@ -64,6 +64,8 @@ module.exports = {
                 { name: "Learn About the Mod!", value: "[Roles](https://tohe.weareten.ca/Roles.html)", inline: true },
                 { name: "Learn About the Team!", value: "[About Us](https://tohe.weareten.ca/AboutUs.html)", inline: true },
                 { name: "Want to support TOHE?", value: "[Purchase a Package!](https://weareten.ca/TOHE/)", inline: true },
+                { name: "Privacy Policy", value: "[Privacy Policy](https://weareten.ca/privacy)", inline: true },
+                { name: "Terms of Service", value: "[Terms of Service](https://weareten.ca/terms)", inline: true }
             )
             .setTimestamp();
 
