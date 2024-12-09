@@ -59,25 +59,27 @@ module.exports = {
         for (const [key, value] of Object.entries(member.presence.clientStatus || {})) {
             // Check each platform and add the corresponding emoji to the status string
             if (key === 'desktop') {
-                if (value === 'online') status += '<:d_online:1315460103151030342> ';
-                if (value === 'idle') status += '<:d_idle:1315460100097572904> ';
-                if (value === 'dnd') status += '<:d_dnd:1315460099048734800> ';
-                if (value === 'offline') status += '<:d_offline:1315460101661921371> ';
+                if (value === 'online') status += ' <:d_online:1315460103151030342>';
+                if (value === 'idle') status += ' <:d_idle:1315460100097572904>';
+                if (value === 'dnd') status += ' <:d_dnd:1315460099048734800>';
+                if (value === 'offline') status += ' <:d_offline:1315460101661921371>';
             }
             if (key === 'mobile') {
-                if (value === 'online') status += '<:m_online:1315460113875861524> ';
-                if (value === 'idle') status += '<:m_idle:1315460110226690120> ';
-                if (value === 'dnd') status += '<:m_dnd:1315460221057106010> ';
-                if (value === 'offline') status += '<:m_offline:1315460222156017765> ';
+                if (value === 'online') status += ' <:m_online:1315460113875861524>';
+                if (value === 'idle') status += ' <:m_idle:1315460110226690120>';
+                if (value === 'dnd') status += ' <:m_dnd:1315460221057106010>';
+                if (value === 'offline') status += ' <:m_offline:1315460222156017765>';
             }
             if (key === 'web') {
-                if (value === 'online') status += '<:w_online:1315460224735379516> ';
-                if (value === 'idle') status += '<:w_idle:1315460117017395241> ';
-                if (value === 'dnd') status += '<:w_dnd:1315460228309057587> ';
-                if (value === 'offline') status += '<:w_offline:1315460120594878545> ';
+                if (value === 'online') status += ' <:w_online:1315460224735379516>';
+                if (value === 'idle') status += ' <:w_idle:1315460117017395241>';
+                if (value === 'dnd') status += ' <:w_dnd:1315460228309057587>';
+                if (value === 'offline') status += ' <:w_offline:1315460120594878545>';
             }
         }
 
+        if (status === `${member} `) status += ' ⚫';
+        
         profileEmbed.setDescription(status);
 
         if (member.id === interaction.member.id) {
