@@ -28,12 +28,13 @@ module.exports = {
         .addUserOption(option => option.setName('user').setDescription('User to view')),
 
     async execute(interaction) {
-        const member = interaction.options.getMember('user') || interaction.member;
+        const member = await interaction.options.getMember('user') || await interaction.member;
+        console.log(member.presence.clientStatus);
         let memberData = await getUserByID(member.id);
 
         if (memberData.error) {
             console.error(`profile: failed to get user data for ${member.tag}`);
-            return interaction.reply({ content: `Failed to get user data for ${member.tag}. This shouldn't happen, please contact Moe.`, ephemeral: true });
+            // return interaction.reply({ content: `Failed to get user data for ${member.tag}. This shouldn't happen, please contact Moe.`, ephemeral: true });
         }
 
         if (memberData.result === 'No user found with that ID') {
@@ -41,10 +42,10 @@ module.exports = {
         }
 
         let profileEmbed = new EmbedBuilder()
+            .setTitle(`${member.displayName}'s Profile`)
             .setColor(member.displayHexColor)
             .setThumbnail(member.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
-            .setDescription(`${member}`)
             .setFooter({ text: `User ID: ${member.id} • Join discord.gg/tohe for any questions`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
             .addFields([
                 { name: 'Known As:', value: `${await getTitle(member)}`, inline: true },
@@ -53,24 +54,35 @@ module.exports = {
                 { name: 'Roles:', value: await getRoles(member) }
             ]);
 
-        switch (member.presence.status) {
-            case 'online':
-                profileEmbed.setDescription(`${member} 🟢`);
-                break;
-            case 'idle':
-                profileEmbed.setDescription(`${member} 🟡`);
-                break;
-            case 'dnd':
-                profileEmbed.setDescription(`${member} 🔴`);
-                break;
-            case 'offline':
-                profileEmbed.setDescription(`${member} ⚫`);
-                break;
+        let status = `${member} `;
+        // Loop through the clientStatus object to get the user's status on each platform
+        for (const [key, value] of Object.entries(member.presence.clientStatus || {})) {
+            // Check each platform and add the corresponding emoji to the status string
+            if (key === 'desktop') {
+                if (value === 'online') status += '<:d_online:1315460103151030342> ';
+                if (value === 'idle') status += '<:d_idle:1315460100097572904> ';
+                if (value === 'dnd') status += '<:d_dnd:1315460099048734800> ';
+                if (value === 'offline') status += '<:d_offline:1315460101661921371> ';
+            }
+            if (key === 'mobile') {
+                if (value === 'online') status += '<:m_online:1315460113875861524> ';
+                if (value === 'idle') status += '<:m_idle:1315460110226690120> ';
+                if (value === 'dnd') status += '<:m_dnd:1315460221057106010> ';
+                if (value === 'offline') status += '<:m_offline:1315460222156017765> ';
+            }
+            if (key === 'web') {
+                if (value === 'online') status += '<:w_online:1315460224735379516> ';
+                if (value === 'idle') status += '<:w_idle:1315460117017395241> ';
+                if (value === 'dnd') status += '<:w_dnd:1315460228309057587> ';
+                if (value === 'offline') status += '<:w_offline:1315460120594878545> ';
+            }
         }
+
+        profileEmbed.setDescription(status);
 
         if (member.id === interaction.member.id) {
             profileEmbed.addFields([
-                { name: 'Among Us Friend Code:', value: memberData.friendcode || 'Not Set', inline: true },
+                { name: 'Among Us Friend Code:', value: memberData.friendcode || 'Not Implemented (WIP)', inline: true },
                 { name: 'Admire Opt-In:', value: memberData.admireOptIn ? 'Yes' : 'No', inline: true },
             ]);
 
@@ -83,7 +95,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Primary)
                 .setCustomId('toggle_admire_opt_in');
 
-            const row = new ActionRowBuilder().addComponents(friendcodeButton, admireButton);
+            const row = new ActionRowBuilder().addComponents(admireButton);
             return interaction.reply({ embeds: [profileEmbed], components: [row], ephemeral: true }).then(async (r) => {
                 const collectorFilter = i => member.id === interaction.member.id;
                 try {
