@@ -53,7 +53,7 @@ module.exports = {
                 { name: 'Roles:', value: await getRoles(member) }
             ]);
 
-        const clients = member.presence.clientStatus;
+        const clients = member.presence?.clientStatus;
         let status = `${member} `;
         if (!clients) status += ' ⚫';
         else for (const [key, value] of Object.entries(clients || {})) {
