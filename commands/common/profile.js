@@ -54,9 +54,11 @@ module.exports = {
                 { name: 'Roles:', value: await getRoles(member) }
             ]);
 
+        const clients = member.presence.clientStatus;
         let status = `${member} `;
-        // Loop through the clientStatus object to get the user's status on each platform
-        for (const [key, value] of Object.entries(member.presence.clientStatus || {})) {
+        if (!clients) status += ' ⚫';
+        
+        for (const [key, value] of Object.entries(clients || {})) {
             // Check each platform and add the corresponding emoji to the status string
             if (key === 'desktop') {
                 if (value === 'online') status += ' <:d_online:1315460103151030342>';
@@ -78,8 +80,6 @@ module.exports = {
             }
         }
 
-        if (status === `${member} `) status += ' ⚫';
-        
         profileEmbed.setDescription(status);
 
         if (member.id === interaction.member.id) {
