@@ -46,7 +46,7 @@ module.exports = {
             .setColor(member.displayHexColor)
             .setThumbnail(member.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
-            .setFooter({ text: `User ID: ${member.id} • Join discord.gg/tohe for any questions`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+            .setFooter({ text: `User ID: ${member.id} • Join discord.gg/ten for any questions`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
             .addFields([
                 { name: 'Known As:', value: `${await getTitle(member)}`, inline: true },
                 { name: 'Account Created:', value: `<t:${Math.floor(member.user.createdAt.getTime() / 1000)}:R>`, inline: true },
